@@ -7,58 +7,58 @@
         cursor: pointer;
     }
 
-    .write-action {
-        display: none;
-    }
+    // .write-action {
+    //     display: none;
+    // }
 
-    .editable .write-action {
-        display: inline-block;
-    }
+    // .editable .write-action {
+    //     display: inline-block;
+    // }
 
-    .content-link {
-        background: #0002;
-        border: none;
-        padding-bottom: 0;
-        padding-top: 0;
-    }
+    // .content-link {
+    //     background: #0002;
+    //     border: none;
+    //     padding-bottom: 0;
+    //     padding-top: 0;
+    // }
 
-    h1 {
-        flex: none;
-    }
+    // h1 {
+    //     flex: none;
+    // }
 
-    p,
-    details {
-        margin-bottom: 1em;
-        overflow: hidden;
-    }
+    // p,
+    // details {
+    //     margin-bottom: 1em;
+    //     overflow: hidden;
+    // }
 
     .image-column {
         float: left;
         max-width: 40%;
         min-width: min-content;
         width: max-content;
-        z-index: 2;
-        position: relative;
+        // z-index: 2;
+        // position: relative;
 
         margin: 0 0.5em 0.5em 0;
 
-        display: grid;
-        grid-template-columns: 1fr;
-        grid-gap: 0.5em;
+        // display: grid;
+        // grid-template-columns: 1fr;
+        // grid-gap: 0.5em;
 
-        > img,
-        input {
-            justify-self: center;
-            max-width: 100%;
-        }
+        // > img,
+        // input {
+        //     justify-self: center;
+        //     max-width: 100%;
+        // }
 
-        > div {
-            width: 100%;
-        }
+        // > div {
+        //     width: 100%;
+        // }
 
-        &:empty {
-            margin: 0;
-        }
+        // &:empty {
+        //     margin: 0;
+        // }
     }
 
     dl.kanka-grid {

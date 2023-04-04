@@ -1,0 +1,80 @@
+{{!-- - Title "Übersicht"
+- Eintrag / Posts (Reihenfolge / Unterseiten / TOC)
+- Diverse Eigenschaften
+- Pins
+- Bild --}}
+
+
+{{#if data.title.show}}
+<header class="journal-page-header">
+    <h{{data.title.level}}>{{data.name}}</h{{data.title.level}}>
+</header>
+{{/if}}
+<section class="journal-page-content">
+    {{#if data.system.img }}
+    <div class="image-column">
+        <img src="{{ data.system.img }}" alt="{{ data.name }}" />
+    </div>
+    {{/if}}
+    
+    <dl class="kanka-grid">
+        {{!-- {{~>../shared/detailRow value=kankaEntity.type label='shared.labels.type' }}
+        {{~>../shared/detailRow value=kankaEntity.title label='character.labels.title' }}
+        {{~>../shared/detailRow value=kankaEntity.sex label='character.labels.sex' }}
+        {{~>../shared/detailRow value=kankaEntity.pronouns label='character.labels.pronouns' }}
+        {{~>../shared/detailRow value=kankaEntity.age label='character.labels.age' }}
+        {{~>../shared/detailRow value=kankaEntity.is_dead label='character.labels.isDead' localizeValue='shared.value' }}
+        {{~>../shared/detailRow value=kankaEntity.location_id type='location' label='shared.labels.location' reference=true }}
+        {{~>../shared/detailRow value=kankaEntity.race_id type='race' label='character.labels.race' reference=true }}
+        {{~>../shared/detailRow value=kankaEntity.family_id type='family' label='character.labels.family' reference=true }}
+        
+        {{~#with (kankaFilterBy (kankaFilterReferences kankaEntity.organisations.data) 'pin_id' 'regex:1|3') as | starred |~}}
+        {{~#each starred ~}}
+        {{~>../shared/detailRow value=organisation_id type='organisation' rawLabel=role label='character.labels.member'
+        reference=true isSecret=(kankaIsSecret this) }}
+        {{~/each~}}
+        {{~/with~}} --}}
+        {{!-- {{~#with (kankaFilterBy (kankaFilterReferences kankaEntity.relations) 'is_star' true) as | starred |~}}
+        {{~#each starred ~}}
+        {{~>./detailRow value=target_id rawLabel=relation reference=true isSecret=(kankaIsSecret this) }}
+        {{~/each~}}
+        {{~/with~}}
+        {{~#with (kankaSortBy (kankaFilterBy (kankaFilterAccessible kankaEntity.attributes) 'is_star' true) 'default_order') as
+        | starred |~}}
+        {{~#each starred ~}}
+        {{~>./tabs/attributeEntry attribute=this~}}
+        {{~/each~}}
+        {{~/with~}} --}}
+        <dt>{{ kankaLocalize 'journal.shared.labels.type' }}</dt>
+        <dd>Value</dd>
+    </dl>
+
+
+    {{!-- {{~#if reference ~}}
+    {{~#with (kankaFindReference value type) as | ref |~}}
+    <dt {{#if ../isSecret}}class="-secret" {{/if}}>
+        {{~#if ../rawLabel~}}
+        {{~../rawLabel~}}
+        {{~else~}}
+        {{~ kankaLocalize 'journal' ../label ~}}
+        {{~/if~}}
+    </dt>
+    <dd>{{{ kankaLinkReference ref }}}</dd>
+    {{~/with~}}
+    {{~else~}}
+    {{~#if value ~}}
+    <dt {{#if isSecret}}class="-secret" {{/if}}>
+        {{~#if rawLabel~}}
+        {{~rawLabel~}}
+        {{~else~}}
+        {{~ kankaLocalize 'journal' label ~}}
+        {{~/if~}}
+    </dt>
+    {{~#if localizeValue ~}}
+    <dd>{{ kankaLocalize 'journal' localizeValue value }}</dd>
+    {{~else~}}
+    <dd>{{ kankaNl2br value }}</dd>
+    {{~/if~}}
+    {{~/if~}}
+    {{~/if~}} --}}
+</section>

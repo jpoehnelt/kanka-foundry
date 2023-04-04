@@ -78,6 +78,11 @@
             "caption": "The button that opens the dialog to import your Kanka entities"
         }
     ],
+    "documentTypes": {
+        "JournalEntryPage": {
+            "overview": {}
+        }
+    },
     "bugs": "https://github.com/eXaminator/kanka-foundry/issues",
     "changelog": "https://raw.githubusercontent.com/eXaminator/kanka-foundry/__VERSION__/CHANGELOG.md",
     "license": "https://raw.githubusercontent.com/eXaminator/kanka-foundry/__VERSION__/LICENSE",

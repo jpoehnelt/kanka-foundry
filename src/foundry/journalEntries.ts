@@ -1,5 +1,6 @@
 import moduleConfig from '../../public/module.json';
 import type ReferenceCollection from '../api/ReferenceCollection';
+import { JournalImagePageDataProperties, JournalPageDataProperties, JournalTextPageDataProperties } from '../types/JournalPages';
 import Reference from '../types/Reference';
 import { KankaApiChildEntity, KankaApiId as KankaApiChildId, KankaApiEntity, KankaApiEntityId, KankaApiEntityType } from '../types/kanka';
 import getGame from './getGame';
@@ -24,6 +25,16 @@ type NullableFlagTypes = {
 
 type FlagDataObject = {
     [Key in keyof NullableFlagTypes as Key extends string ? `flags.${typeof moduleConfig.name}.${Key}` : never]: NullableFlagTypes[Key]
+};
+
+type PageProto = {
+    name: string,
+    type: string,
+    showTitle?: boolean,
+    children?: PageProto[],
+    content?: string,
+    src?: string,
+    caption?: string,
 };
 
 function getJournal(): Journal {
@@ -62,6 +73,45 @@ function buildKankaFlags(flags: Partial<NullableFlagTypes>): Partial<FlagDataObj
     });
 
     return flagData;
+}
+
+function createPagesFromProtos(protos: PageProto[], level = 1, parentSort = 0): unknown[] {
+    return protos.flatMap((proto, idx) => {
+        const sortStep = 10 ** (5 - level);
+        const sort = parentSort + sortStep * idx;
+        const childPages = createPagesFromProtos(proto.children ?? [], level + 1, sort);
+
+        if (proto.type === 'text') {
+            return [
+                {
+                    type: proto.type,
+                    name: proto.name,
+                    title: {
+                        show: proto.showTitle ?? true,
+                        level,
+                    },
+                    sort,
+                    text: { content: proto.content },
+                },
+                ...childPages,
+            ];
+        }
+
+        return [
+            {
+                type: proto.type,
+                name: proto.name,
+                title: {
+                    show: proto.showTitle ?? true,
+                    level,
+                },
+                sort,
+                image: { caption: proto.caption },
+                src: proto.src,
+            },
+            ...childPages,
+        ];
+    });
 }
 
 export function getEntryFlag<FlagName extends keyof FlagTypes>(
@@ -109,33 +159,71 @@ export async function createOrUpdateJournalEntry(
     entity: KankaApiChildEntity & { ancestors?: number[] },
     references: ReferenceCollection,
 ): Promise<JournalEntry> {
+
+    const pages: PageProto[] = [
+        // {
+        //     name: 'Bild',
+        //     type: 'image',
+        //     src: entity.image_full!,
+        //     caption: entity.name,
+        //     showTitle: false,
+        // },
+        // {
+        //     name: 'Übersicht',
+        //     type: 'kanka-foundry.overview',
+        // content: entity.entry_parsed,
+
+        // children: entity.entity_notes?.map((note) => ({
+        //     name: note.name,
+        //     type: 'text',
+        //     content: note.entry_parsed,
+        // })),
+        // },
+    ];
+
     const journalData = {
         name: entity.name,
-        img: entity.has_custom_image ? entity.image_full : undefined,
-        content: entity.entry_parsed,
+        // img: entity.has_custom_image ? entity.image_full : undefined,
+        // content: entity.entry_parsed,
+        // pages: createPagesFromProtos(pages),
+        pages: [
+            {
+                type: 'kanka-foundry.overview',
+                name: 'Übersicht',
+                title: { show: false, level: 1 },
+                system: {
+                    img: entity.has_custom_image ? entity.image_full : undefined,
+                },
+                // sort: 0,
+                // image: { caption: proto.caption },
+                // src: proto.src,
+            }
+        ],
         // eslint-disable-next-line @typescript-eslint/naming-convention
         'flags.core.sheetClass': `${moduleConfig.name}.KankaJournalApplication`,
-        ...buildKankaFlags({
-            campaign: campaignId,
-            type,
-            id: entity.entity_id,
-            version: buildVersionString(entity),
-            snapshot: entity,
-            references: references.getRecord(),
-        }),
+        // ...buildKankaFlags({
+        //     campaign: campaignId,
+        //     type,
+        //     id: entity.entity_id,
+        //     version: buildVersionString(entity),
+        //     snapshot: entity,
+        //     references: references.getRecord(),
+        // }),
     };
 
     let entry = findEntryByEntityId(entity.entity_id);
 
     if (entry) {
+        await entry.deleteEmbeddedDocuments('JournalEntryPage', [], { deleteAll: true });
         await entry.update({
-            ...buildKankaFlags({
-                snapshot: null,
-                references: null,
-            }),
+            // ...buildKankaFlags({
+            //     snapshot: null,
+            //     references: null,
+            // }),
+            ...journalData,
             permission: { default: getExpectedPermission(entity, true) },
         });
-        await entry.update(journalData);
+        // await entry.update(journalData);
     } else {
         const path = entity?.ancestors
             ?.map(id => references.findByEntityId(id))
@@ -144,7 +232,7 @@ export async function createOrUpdateJournalEntry(
 
         entry = await JournalEntry.create({
             ...journalData,
-            permission: { default: getExpectedPermission(entity, false) },
+            // permission: { default: getExpectedPermission(entity, false) },
             folder: folder?.id,
         }) as JournalEntry;
     }

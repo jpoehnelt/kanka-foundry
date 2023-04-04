@@ -229,3 +229,8 @@ KANKA:
             aktualisiert.
         nothingToDo: >
             Kanka-Foundry konnte keine Einträge aktualisieren. Bitte prüfe, dass du die richtige Kampagne in denEinstellungen ausgewählt hast.
+
+TYPES:
+    JournalEntryPage:
+        kanka-foundry:
+            overview": 'Kanka Overview Page'

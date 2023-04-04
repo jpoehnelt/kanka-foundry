@@ -2,6 +2,5 @@
 /// <reference types="vite/client" />
 
 declare module '*.hbs' {
-    const path: string;
-    export default path;
+    export = string;
 }

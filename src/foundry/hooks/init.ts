@@ -9,6 +9,8 @@ import { logError } from '../../util/logger';
 import getGame from '../getGame';
 import { showError } from '../notifications';
 import { getSetting, registerSettings } from '../settings';
+import OverviewPageSheet from '../../apps/KankaJournal/pages/overview/OverviewPageSheet';
+import KankaPageModel from '../../apps/KankaJournal/pages/overview/OverviewModel';
 
 function setToken(token: string): void {
     if (!token) {
@@ -47,9 +49,21 @@ function renderDebugElement(): void {
 
 export default function init(): void {
     try {
-        Journal.registerSheet(moduleConfig.name, KankaJournalApplication, {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        DocumentSheetConfig.registerSheet(JournalEntry, moduleConfig.name, KankaJournalApplication, {
             makeDefault: false,
-            label: 'Kanka-Foundry Journal sheet',
+        });
+
+        Object.assign(CONFIG.JournalEntryPage.dataModels, {
+            [`${moduleConfig.id}.overview`]: KankaPageModel,
+        });
+
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        DocumentSheetConfig.registerSheet(JournalEntryPage, moduleConfig.name, OverviewPageSheet, {
+            types: ['kanka-foundry.overview'],
+            makeDefault: false,
         });
 
         registerHandlebarsHelpers();
@@ -72,6 +86,8 @@ export default function init(): void {
         logError(error);
         showError('general.initializationError');
     }
+
+    setTimeout(() => getGame().journal?.getName('Kitty the cute')?.sheet?.render(true), 1000);
 }
 
 if (import.meta.hot) {
@@ -82,10 +98,6 @@ if (import.meta.hot) {
     import.meta.hot.accept((newModule) => {
         if ((game as Game).ready) {
             newModule?.default();
-
-            Object
-                .values(ui.windows)
-                .forEach(app => app.render(false));
         }
     });
 }

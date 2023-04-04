@@ -17,8 +17,6 @@ if (import.meta.hot) {
 
         Object
             .values(ui.windows)
-            .forEach(a => {
-                if (kankaTemplates.includes(a.template)) a.render(false);
-            });
+            .forEach(a => a.render(false));
     });
 }
